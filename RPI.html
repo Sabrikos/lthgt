@@ -1,0 +1,347 @@
+<!doctype html>
+  <html lang="ru">
+    <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <title>База данных «Учёт телефонных переговоров»</title>
+      <style>
+        :root{
+          --bg:#f0f4f8;
+          --card:#ffffff;
+          --text:#1f2937;
+          --muted:#6b7280;
+          --primary:#2563eb;
+          --primary-light:#dbeafe;
+          --border:#e5e7eb;
+          --danger:#dc2626;
+        }
+        
+        *{box-sizing:border-box;margin:0;padding:0}
+        html,body{height:100%;}
+        body{font-family:system-ui,-apple-system,Segoe UI,Roboto; background:var(--bg); color:var(--text); display:flex; flex-direction:column;}
+
+        .logo-container {margin-bottom: 10px;}
+        .logo-container img {width: auto; max-height: 100px ;}
+        header{background:linear-gradient(90deg,var(--primary),#1d4ed8);color:#fff;padding:20px 0;box-shadow:0 2px 6px rgba(0,0,0,.1)}
+        header .container{max-width:1200px;margin:0 auto;padding:0 20px;text-align:center}
+        header h1{font-size:28px;margin-bottom:6px;font-weight:700}
+        header .sub{font-size:15px;opacity:.9}
+
+        nav{background:#fff;border-bottom:1px solid var(--border);box-shadow:0 1px 4px rgba(0,0,0,.05)}
+        nav .container{max-width:1200px;margin:0 auto;padding:0 20px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+        nav button{background:none;border:none;padding:14px 20px;cursor:pointer;font-size:15px;border-bottom:3px solid transparent;transition:.2s;font-weight:500}
+        nav button:hover{color:var(--primary)}
+        nav button.active{border-color:var(--primary);color:var(--primary);font-weight:600}
+
+        main{flex:1;max-width:1200px;margin:30px auto;padding:0 20px;width:100%;}
+        .grid{display:grid;gap:20px;width:100%;}
+        @media(min-width:900px){.grid{grid-template-columns:1fr 2fr}}
+
+        .card{background:var(--card);border-radius:12px;box-shadow:0 2px 6px rgba(0,0,0,.08);padding:20px;transition:.2s}
+        .card:hover{box-shadow:0 4px 10px rgba(0,0,0,.1)}
+        .card h2{font-size:18px;margin-bottom:14px}
+
+        label{display:block;margin-bottom:6px;font-size:14px;color:var(--muted)}
+        input, select{width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;margin-bottom:12px;font-size:14px}
+
+        .row{display:grid;gap:12px;grid-template-columns:1fr 1fr}
+        .row-3{display:grid;gap:12px;grid-template-columns:1fr 1fr 1fr;align-items:start}
+
+        .actions{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
+        .btn{padding:10px 14px;border-radius:8px;border:1px solid var(--border);background:#fff;cursor:pointer;transition:.2s;font-size:14px}
+        .btn:hover{background:var(--primary-light)}
+        .btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+        .btn.danger{background:var(--danger);border-color:var(--danger);color:#fff}
+
+        table{width:100%;border-collapse:collapse;margin-top:10px;border-radius:8px;overflow:hidden;table-layout:fixed}
+        th,td{padding:12px;border-bottom:1px solid var(--border);font-size:14px;text-align:center;vertical-align:top;word-wrap:break-word}
+        th{background:var(--primary-light);color:var(--text)}
+        tbody tr:hover{background:#f9fafb}
+        .muted{color:var(--muted)}
+
+        .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+        .toolbar input{max-width:250px}
+
+        footer{margin-top:auto;background:#fff;border-top:1px solid var(--border);padding:15px;text-align:center;color:var(--muted);font-size:14px;box-shadow:0 -1px 4px rgba(0,0,0,.05)}
+
+        /* Центровка окна входа */
+        #login{display:flex;justify-content:center;align-items:center;min-height:70vh;}
+        #login .card{width:100%;max-width:400px;margin:auto;}
+
+
+
+      </style>
+
+    </head>
+    <body>
+      <header>
+        <div class="container">
+          <div class="logo-container">
+            <img src= "C:\html2\css\тел.png" alt="телефон" title="телефон">
+          </div>
+          
+          <h1>База данных «Учёт телефонных переговоров»</h1>
+          <div class="sub">Коммуникационная компания • Междугородние переговоры</div>
+        </div>
+      </header>
+
+      <nav>
+        <div class="container" id="tabs">
+          <button class="active" data-tab="login">Вход</button>
+          <button data-tab="abonents">Абоненты</button>
+          <button data-tab="cities">Города и тарифы</button>
+          <button data-tab="calls">Переговоры</button>
+          <button data-tab="reports">Отчёты</button>
+          <button data-tab="settings">Поддержка</button>
+        </div>
+      </nav>
+
+      <main>
+        <!-- Вход -->
+        <section id="login" class="tab">
+          <div class="card">
+            <h2>Вход в систему</h2>
+            <form id="loginForm">
+              <label>Номер телефона</label>
+              <input type="tel" id="loginPhone" required />
+              <label>Email</label>
+              <input type="email" id="loginEmail" required />
+              <label>Пароль</label>
+              <input type="password" id="loginPassword" required />
+              <div class="actions">
+                <button class="btn primary" type="submit">Войти</button>
+                <!-- <button class="btn" type="reset">Войти</button> -->
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <!-- Абоненты -->
+        <section id="abonents" class="tab" style="display:none">
+          <div class="grid">
+            <div class="card">
+              <h2>Добавить абонента</h2>
+              <form id="abonentForm">
+                <input type="hidden" id="abonentId" />
+                <label>Номер телефона</label>
+                <input id="abonentPhone" required />
+                <label>ИНН</label>
+                <input id="abonentInn" required />
+                <label>Адрес</label>
+                <input id="abonentAddress" required />
+                <div class="actions">
+                  <button class="btn primary" type="submit">Сохранить</button>
+                  <button class="btn" type="button" id="abonentReset">Очистить</button>
+                </div>
+              </form>
+            </div>
+            <div class="card">
+              <h2>Список абонентов</h2>
+              <div class="toolbar">
+                <input id="abonentSearch" placeholder="Поиск по телефону или ИНН" />
+              </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Код</th>
+                    <th>Номер телефона</th>
+                    <th>ИНН</th>
+                    <th>Адрес</th>
+                    <th>Действия</th>
+                  </tr>
+                </thead>
+                <tbody id="abonentTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- Города -->
+        <section id="cities" class="tab" style="display:none">
+          <div class="grid">
+            <div class="card">
+              <h2>Добавить/Редактировать город</h2>
+              <form id="cityForm">
+                <input type="hidden" id="cityId" />
+                <label>Название города</label>
+                <input id="cityName" required />
+                <div class="row">
+                  <div>
+                    <label>Тариф (день)</label>
+                    <input type="number" min="0" step="1" id="rateDay" required />
+                  </div>
+                  <div>
+                    <label>Тариф (ночь)</label>
+                    <input type="number" min="0" step="1" id="rateNight" required />
+                  </div>
+                </div>
+                <div class="actions">
+                  <button class="btn primary" type="submit">Сохранить</button>
+                  <button class="btn" type="button" id="cityReset">Очистить</button>
+                </div>
+              </form>
+            </div>
+            <div class="card">
+              <h2>Список городов и тарифов</h2>
+              <div class="toolbar">
+                <input id="citySearch" placeholder="Поиск города" />
+              </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Код</th>
+                    <th>Название города</th>
+                    <th>Тариф днём (₽/мин)</th>
+                    <th>Тариф ночью (₽/мин)</th>
+                    <th>Действия</th>
+                  </tr>
+                </thead>
+                <tbody id="cityTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- Переговоры -->
+        <section id="calls" class="tab" style="display:none">
+          <div class="grid">
+            <div class="card">
+              <h2>Добавить/Редактировать переговор</h2>
+              <form id="callForm">
+                <input type="hidden" id="callId" />
+                <div class="row">
+                  <div>
+                    <label>Абонент</label>
+                    <select id="callAbonent" required></select>
+                  </div>
+                  <div>
+                    <label>Город</label>
+                    <select id="callCity" required></select>
+                  </div>
+                </div>
+                <div class="row">
+                  <div>
+                    <label>Дата и время</label>
+                    <input type="datetime-local" id="callDateTime" required />
+                  </div>
+                  <div>
+                    <label>Количество минут</label>
+                    <input type="number" id="callMinutes" min="1" required />
+                  </div>
+                </div>
+                <div class="row">
+                  <div>
+                    <label>Время суток</label>
+                    <select id="callTimeOfDay"><option value="day">День</option><option value="night">Ночь</option></select>
+                  </div>
+                </div>
+                <div class="actions">
+                  <button class="btn primary" type="submit">Сохранить</button>
+                  <button class="btn" type="button" id="callReset">Очистить</button>
+                </div>
+              </form>
+            </div>
+            <div class="card">
+              <h2>Список переговоров</h2>
+              <div class="toolbar">
+                <select id="filterAbonent"><option value="">Все абоненты</option></select>
+                <select id="filterCity"><option value="">Все города</option></select>
+                <input type="date" id="filterFrom" />
+                <button class="btn" id="filterReset" type="button">Сброс</button>
+              </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Код</th>
+                    <th>Абонент</th>
+                    <th>Город</th>
+                    <th>Дата и время</th>
+                    <th>Минуты</th>
+                    <th>Время суток</th>
+                    <th>Тариф (₽/мин)</th>
+                    <th>Стоимость</th>
+                    <th>Действия</th>
+                  </tr>
+                </thead>
+                <tbody id="callTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- Отчёты -->
+        <section id="reports" class="tab" style="display:none">
+          <div class="card">
+            <h2>Отчёт по абонентам</h2>
+            <div class="toolbar">
+              <input id="reportSearch" placeholder="Поиск абонента" />
+              <input type="date" id="reportFrom" />
+              <button class="btn" id="reportRun">Показать</button>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Абонент</th>
+                  <th>ИНН</th>
+                  <th>Адрес</th>
+                  <th>Всего звонков</th>
+                  <th>Общее время (мин)</th>
+                  <th>Общая сумма (₽)</th>
+                </tr>
+              </thead>
+              <tbody id="reportTable"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Настройки -->
+        <!-- <section id="settings" class="tab" style="display:none">
+          <div class="card">
+            <h2>Связь со службой поддержки</h2>
+            <div class="actions">
+              <button class="btn" id="exportBtn">Отправить</button>
+              <input type="file" id="importFile" accept="application/json" style="display:none" />
+              <button class="btn" id="importBtn">Поделиться</button>
+              <button class="btn danger" id="wipeBtn">Очистить базу</button>
+            </div>
+            <p class="muted">Данные сохраняются локально в браузере.</p>
+          </div>
+        </section> -->
+
+        <section id="settings" class="tab" style="display:none">
+          <div class="card">
+            <h2>Связь со службой поддержки</h2>
+            <form class="contact-form">
+                <input type="text" placeholder="Введите сообщение" required>
+                <!-- <input type="email" placeholder="Емэйл" required>
+                <textarea rows="5" placeholder="Напишите нам сообщение" required></textarea> -->
+                <button class="btn" id="exportBtn">Отправить</button>
+                <!-- <button type="submit">Отправить</button> -->
+            </form>
+            </div>
+          </div>  
+        </section>
+
+      </main>
+
+      <footer>© Учебный проект. Разработка пользовательского интерфейса.</footer>
+
+      <script>
+      const storeKey = 'calls-db-v5';
+      const db = {abonents:[],cities:[],calls:[]};
+      function load(){const raw=localStorage.getItem(storeKey);if(raw)Object.assign(db,JSON.parse(raw));}
+      function save(){localStorage.setItem(storeKey,JSON.stringify(db));}
+
+      document.querySelectorAll('#tabs button').forEach(btn=>btn.addEventListener('click',()=>{
+        document.querySelectorAll('#tabs button').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.tab').forEach(s=>s.style.display='none');
+        document.getElementById(btn.dataset.tab).style.display='block';
+      }));
+
+      load();
+      document.querySelectorAll('.tab').forEach(s => s.style.display='none');
+      document.getElementById('login').style.display='block';
+      </script>
+    </body>
+</html>
